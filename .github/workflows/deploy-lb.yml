@@ -120,3 +120,54 @@ jobs:
     - name: Verify deployment
       run: |
         echo "Waiting for application to start..."
+        sleep 30
+        
+        # Test the application
+        if ssh -i ~/.ssh/azure_vm_key azureuser@${{ matrix.vm_ip }} "curl -f http://localhost:3000/health"; then
+          echo "✅ Application health check passed on ${{ matrix.vm_ip }}"
+        else
+          echo "❌ Application health check failed on ${{ matrix.vm_ip }}"
+          exit 1
+        fi
+        
+        # Test nginx proxy
+        if ssh -i ~/.ssh/azure_vm_key azureuser@${{ matrix.vm_ip }} "curl -f http://localhost/health"; then
+          echo "✅ Nginx proxy health check passed on ${{ matrix.vm_ip }}"
+        else
+          echo "❌ Nginx proxy health check failed on ${{ matrix.vm_ip }}"
+          exit 1
+        fi
+
+  verify-load-balancer:
+    runs-on: ubuntu-latest
+    needs: [get-infrastructure-info, deploy]
+    steps:
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Get Application Gateway IP
+      id: appgw-ip
+      run: |
+        RG_NAME="${{ needs.get-infrastructure-info.outputs.resource_group }}"
+        APPGW_IP=$(az network public-ip list -g $RG_NAME --query "[?contains(name, 'appgw')].ipAddress" -o tsv)
+        echo "appgw_ip=$APPGW_IP" >> $GITHUB_OUTPUT
+        echo "Application Gateway IP: $APPGW_IP"
+    
+    - name: Test Load Balancer
+      run: |
+        APPGW_IP="${{ steps.appgw-ip.outputs.appgw_ip }}"
+        
+        echo "Testing Application Gateway at $APPGW_IP"
+        
+        # Wait for Application Gateway to detect healthy backends
+        sleep 60
+        
+        # Test health endpoint
+        if curl -f http://$APPGW_IP/health; then
+          echo "✅ Load balancer health check passed"
+        else
+          echo "❌ Load balancer health check failed"
+          exit 1
+        fi
