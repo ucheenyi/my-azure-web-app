@@ -157,17 +157,4 @@ jobs:
           exit 1
         fi
         
-
-### Phase 5: Configure GitHub Secrets (5 minutes)
-Go to GitHub repository → Settings → Secrets and variables → Actions
-
-**Required Secrets:**
-1. **AZURE_CREDENTIALS**: The service principal JSON from prerequisites
-2. **VM_PRIVATE_KEY**: Content of `~/.ssh/azure_vm_key` (the private key file)
-
-**Get ACR credentials automatically via Terraform outputs:**
-```bash
-# These are automatically retrieved in the GitHub Actions workflow
-terraform output container_registry_login_server
-terraform output container_registry_username  
 terraform output -raw container_registry_password
