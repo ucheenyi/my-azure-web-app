@@ -1,0 +1,173 @@
+name: Deploy to Azure Load Balanced VMs
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGISTRY_NAME: # Will be set from terraform output
+  IMAGE_NAME: myapp
+
+jobs:
+  get-infrastructure-info:
+    runs-on: ubuntu-latest
+    outputs:
+      registry_server: ${{ steps.get-info.outputs.registry_server }}
+      vm_ips: ${{ steps.get-info.outputs.vm_ips }}
+      resource_group: ${{ steps.get-info.outputs.resource_group }}
+    steps:
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Get Infrastructure Info
+      id: get-info
+      run: |
+        # Find the resource group (adjust if you changed the name)
+        RG_NAME="rg-webapp-lb"
+        
+        # Get ACR info
+        ACR_NAME=$(az acr list -g $RG_NAME --query '[0].name' -o tsv)
+        REGISTRY_SERVER="${ACR_NAME}.azurecr.io"
+        
+        # Get VM IPs
+        VM_IPS=$(az vm list-ip-addresses -g $RG_NAME --query '[].virtualMachine.network.publicIpAddresses[0].ipAddress' -o tsv | tr '\n' ',' | sed 's/,$//')
+        
+        echo "registry_server=$REGISTRY_SERVER" >> $GITHUB_OUTPUT
+        echo "vm_ips=$VM_IPS" >> $GITHUB_OUTPUT
+        echo "resource_group=$RG_NAME" >> $GITHUB_OUTPUT
+        
+        echo "Registry Server: $REGISTRY_SERVER"
+        echo "VM IPs: $VM_IPS"
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: get-infrastructure-info
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Build and push Docker image
+      run: |
+        REGISTRY_SERVER="${{ needs.get-infrastructure-info.outputs.registry_server }}"
+        
+        # Login to ACR
+        az acr login --name ${REGISTRY_SERVER%.*}
+        
+        # Build and push image
+        docker build -t $REGISTRY_SERVER/${{ env.IMAGE_NAME }}:latest .
+        docker push $REGISTRY_SERVER/${{ env.IMAGE_NAME }}:latest
+        
+        echo "Image pushed: $REGISTRY_SERVER/${{ env.IMAGE_NAME }}:latest"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [get-infrastructure-info, build-and-push]
+    strategy:
+      matrix:
+        vm_ip: ${{ fromJson(format('["{0}"]', needs.get-infrastructure-info.outputs.vm_ips)) }}
+    steps:
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Get ACR credentials
+      id: acr-creds
+      run: |
+        RG_NAME="${{ needs.get-infrastructure-info.outputs.resource_group }}"
+        ACR_NAME=$(az acr list -g $RG_NAME --query '[0].name' -o tsv)
+        
+        ACR_USERNAME=$(az acr credential show --name $ACR_NAME --query username -o tsv)
+        ACR_PASSWORD=$(az acr credential show --name $ACR_NAME --query passwords[0].value -o tsv)
+        
+        echo "acr_username=$ACR_USERNAME" >> $GITHUB_OUTPUT
+        echo "::add-mask::$ACR_PASSWORD"
+        echo "acr_password=$ACR_PASSWORD" >> $GITHUB_OUTPUT
+    
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.VM_PRIVATE_KEY }}" > ~/.ssh/azure_vm_key
+        chmod 600 ~/.ssh/azure_vm_key
+        ssh-keyscan -H ${{ matrix.vm_ip }} >> ~/.ssh/known_hosts
+    
+    - name: Deploy to VM
+      run: |
+        REGISTRY_SERVER="${{ needs.get-infrastructure-info.outputs.registry_server }}"
+        
+        ssh -i ~/.ssh/azure_vm_key azureuser@${{ matrix.vm_ip }} \
+          "~/deployment/deploy.sh '$REGISTRY_SERVER' '${{ steps.acr-creds.outputs.acr_username }}' '${{ steps.acr-creds.outputs.acr_password }}' '${{ env.IMAGE_NAME }}'"
+    
+    - name: Verify deployment
+      run: |
+        echo "Waiting for application to start..."
+        sleep 30
+        
+        # Test the application
+        if ssh -i ~/.ssh/azure_vm_key azureuser@${{ matrix.vm_ip }} "curl -f http://localhost:3000/health"; then
+          echo "✅ Application health check passed on ${{ matrix.vm_ip }}"
+        else
+          echo "❌ Application health check failed on ${{ matrix.vm_ip }}"
+          exit 1
+        fi
+        
+        # Test nginx proxy
+        if ssh -i ~/.ssh/azure_vm_key azureuser@${{ matrix.vm_ip }} "curl -f http://localhost/health"; then
+          echo "✅ Nginx proxy health check passed on ${{ matrix.vm_ip }}"
+        else
+          echo "❌ Nginx proxy health check failed on ${{ matrix.vm_ip }}"
+          exit 1
+        fi
+
+  verify-load-balancer:
+    runs-on: ubuntu-latest
+    needs: [get-infrastructure-info, deploy]
+    steps:
+    - name: Azure CLI Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Get Application Gateway IP
+      id: appgw-ip
+      run: |
+        RG_NAME="${{ needs.get-infrastructure-info.outputs.resource_group }}"
+        APPGW_IP=$(az network public-ip list -g $RG_NAME --query "[?contains(name, 'appgw')].ipAddress" -o tsv)
+        echo "appgw_ip=$APPGW_IP" >> $GITHUB_OUTPUT
+        echo "Application Gateway IP: $APPGW_IP"
+    
+    - name: Test Load Balancer
+      run: |
+        APPGW_IP="${{ steps.appgw-ip.outputs.appgw_ip }}"
+        
+        echo "Testing Application Gateway at $APPGW_IP"
+        
+        # Test health endpoint
+        if curl -f http://$APPGW_IP/health; then
+          echo "✅ Load balancer health check passed"
+        else
+          echo "❌ Load balancer health check failed"
+          exit 1
+        fi
+        
+
+### Phase 5: Configure GitHub Secrets (5 minutes)
+Go to GitHub repository → Settings → Secrets and variables → Actions
+
+**Required Secrets:**
+1. **AZURE_CREDENTIALS**: The service principal JSON from prerequisites
+2. **VM_PRIVATE_KEY**: Content of `~/.ssh/azure_vm_key` (the private key file)
+
+**Get ACR credentials automatically via Terraform outputs:**
+```bash
+# These are automatically retrieved in the GitHub Actions workflow
+terraform output container_registry_login_server
+terraform output container_registry_username  
+terraform output -raw container_registry_password
