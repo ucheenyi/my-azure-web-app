@@ -55,9 +55,14 @@ jobs:
     - name: Build and push Docker image
       run: |
         REGISTRY_SERVER="${{ needs.get-infrastructure-info.outputs.registry_server }}"
-        ACR_NAME="${REGISTRY_SERVER%.*}"
         
-        # Login to ACR using just the registry name (without .azurecr.io)
+        # Extract ACR name (everything before first dot)
+        ACR_NAME=${REGISTRY_SERVER%%.*}
+        
+        echo "Registry Server: $REGISTRY_SERVER"
+        echo "ACR Name: $ACR_NAME"
+        
+        # Login to ACR using just the registry name
         az acr login --name $ACR_NAME
         
         # Build and push image
