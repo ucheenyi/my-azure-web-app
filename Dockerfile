@@ -1,20 +1,9 @@
-FROM node:18-alpine
+FROM nginx:alpine
 
-WORKDIR /app
+# Create a simple HTML page
+RUN echo '<html><body><h1>Hello from Container!</h1><p><a href="/health">Health Check</a></p></body></html>' > /usr/share/nginx/html/index.html
+RUN echo 'healthy' > /usr/share/nginx/html/health
 
-# Copy package files
-COPY package*.json ./
-RUN npm ci --omit=dev
+EXPOSE 80
 
-# Copy application code
-COPY . .
-
-# Expose port (match your app_port variable)
-EXPOSE 3000
-
-# Add health check endpoint
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3000/health || exit 1
-
-# Start application
-CMD ["npm", "start"]
+CMD ["nginx", "-g", "daemon off;"]
