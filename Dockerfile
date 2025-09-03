@@ -1,7 +1,10 @@
 FROM nginx:alpine
 
-# Create a simple HTML page
-RUN echo '<html><body><h1>Hello from Container!</h1><p><a href="/health">Health Check</a></p></body></html>' > /usr/share/nginx/html/index.html
+# Copy your custom index.html and other web files
+COPY index.html /usr/share/nginx/html/index.html
+COPY . /usr/share/nginx/html/
+
+# Create health endpoint
 RUN echo 'healthy' > /usr/share/nginx/html/health
 
 EXPOSE 80
