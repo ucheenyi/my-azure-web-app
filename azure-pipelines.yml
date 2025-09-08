@@ -4,14 +4,11 @@ trigger:
       - main
 
 variables:
-  # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'ACR-Connection'
   imageRepository: 'frontend-app'
   containerRegistry: 'myfrontendacr.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
-  
-  # Azure App Service details
   azureSubscription: 'Azure-Connection'
   appName: 'my-frontend-app'
   resourceGroupName: 'your-resource-group-name'
@@ -20,7 +17,7 @@ stages:
 - stage: Build
   displayName: Build and Push Docker Image
   pool: 
-    vmImage: ubuntu-latest  # Pool defined at stage level for inheritance
+    name: 'Default'  # ✅ Self-hosted agent
   jobs:
   - job: Build
     displayName: Build Docker Image
@@ -38,10 +35,10 @@ stages:
 
 - stage: Deploy
   displayName: Deploy to Azure App Service
-  dependsOn: Build  # Ensures sequential execution after Build stage
+  dependsOn: Build
   condition: succeeded()
   pool: 
-    vmImage: ubuntu-latest  # Pool defined at stage level for inheritance
+    name: 'Default'  # ✅ Self-hosted agent
   jobs:
   - deployment: Deploy
     displayName: Deploy to App Service
