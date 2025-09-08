@@ -5,7 +5,7 @@ trigger:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'Azure-Connection'
+  dockerRegistryServiceConnection: 'ACR-Connection'
   imageRepository: 'frontend-app'
   containerRegistry: 'myfrontendacr.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
