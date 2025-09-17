@@ -3,24 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="3DOVE LIMITED - Your trusted IT solutions partner. Expert IT management, consulting, and training services to transform your business operations.">
+    <meta name="keywords" content="IT solutions, IT management, IT consulting, IT training, digital transformation, technology services, Nigeria">
+    <meta name="author" content="3DOVE LIMITED">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://3dove.cloud/">
+    <meta property="og:title" content="3DOVE - Your Trusted IT Solutions Partner">
+    <meta property="og:description" content="Expert IT management, consulting, and training services to transform your business operations.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://3dove.cloud/">
+    <meta property="twitter:title" content="3DOVE - Your Trusted IT Solutions Partner">
+    <meta property="twitter:description" content="Expert IT management, consulting, and training services to transform your business operations.">
+    
     <title>3DOVE - Your Trusted IT Solutions Partner</title>
-    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/mobile-fixes.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='55' fill='%23d4af37'/%3E%3Ctext x='60' y='45' font-family='Arial' font-size='18' font-weight='bold' text-anchor='middle' fill='%23fff'%3E3D%3C/text%3E%3Ctext x='60' y='65' font-family='Arial' font-size='10' text-anchor='middle' fill='%23fff'%3ELTD%3C/text%3E%3C/svg%3E">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "3DOVE LIMITED",
+        "url": "https://3dove.cloud",
+        "logo": "https://3dove.cloud/images/logo.svg",
+        "description": "Your trusted IT solutions partner providing expert IT management, consulting, and training services.",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "Nigeria"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+234-808-508-7464",
+            "contactType": "customer service",
+            "email": "info@3dove.cloud"
+        },
+        "sameAs": [
+            "https://wa.me/qr/KEKJ7BTBGFAUA1"
+        ],
+        "foundingDate": "2024",
+        "numberOfEmployees": "10-50",
+        "industry": "Information Technology",
+        "services": [
+            "IT Management",
+            "IT Consulting",
+            "AI-Powered IT Training",
+            "Digital Transformation"
+        ]
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
     <header>
         <nav>
             <div class="logo">
-                <img src="images/logo.jpeg" alt="3DOVE Logo" class="logo-icon">
+                <img src="images/logo.png" alt="3DOVE Logo" class="logo-icon">
                 <span class="company-name">3<span class="dove-text">DOVE</span>&nbsp;&nbsp;<span class="limited-text">LIMITED</span></span>
             </div>
-            <div class="hamburger-menu">
+            <button class="hamburger-menu" aria-label="Toggle navigation menu" aria-expanded="false">
                 <div class="bar"></div>
                 <div class="bar"></div>
                 <div class="bar"></div>
-            </div>
-            <ul class="nav-links">
+            </button>
+            <ul class="nav-links" role="navigation" aria-label="Main navigation">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#services">Services</a></li>
                 <li><a href="#about">About</a></li>
@@ -31,17 +95,19 @@
     </header>
 
     <!-- Hero Section -->
-    <section id="home" class="hero">
+    <section id="home" class="hero" role="banner">
         <div class="hero-content">
-            <h1>Your Trusted <span class="highlight">IT Solutions</span> Partner</h1>
-            <p>Empowering businesses with seamless operations, strategic digital transformation, and cutting-edge technology training.</p>
-            <div class="rc-number">RC: 7578516</div>
-            <a href="#contact" class="cta-button">Get Started Today</a>
+            <h1>Your <span class="highlight">AI Transformation</span> Partner</h1>
+            <p class="hero-subtitle">Empowering businesses with seamless operations, strategic transformation, and AI-powered workforce training...</p>
+            <div class="hero-actions">
+                <div class="rc-number">RC: 7578516</div>
+                <a href="#contact" class="cta-button">Get Started Today</a>
+            </div>
         </div>
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="services">
+    <section id="services" class="services" role="main">
         <div class="container">
             <div class="section-title">
                 <h2>Our Core Services</h2>
@@ -85,23 +151,27 @@
                     <div class="service-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64">
                             <defs>
-                                <linearGradient id="gold-gradient-3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                                     <stop offset="0%" stop-color="#d4af37" />
                                     <stop offset="100%" stop-color="#f9d776" />
                                 </linearGradient>
                             </defs>
-                            <path fill="url(#gold-gradient-3)" d="M21,4H3A1,1,0,0,0,2,5V19a1,1,0,0,0,1,1H21a1,1,0,0,0,1-1V5A1,1,0,0,0,21,4ZM8,17a3,3,0,0,1-3-3,1,1,0,0,1,2,0,1,1,0,0,0,1,1,1,1,0,0,0,0-2,3,3,0,0,1,0-6,3,3,0,0,1,3,3,1,1,0,0,1-2,0,1,1,0,0,0-1-1,1,1,0,0,0,0,2,3,3,0,0,1,0,6Zm8,0H14a1,1,0,0,1-.707-1.707L16.586,12,13.293,8.707A1,1,0,0,1,14,7h2a1,1,0,0,1,.707.293l4,4a1,1,0,0,1,0,1.414l-4,4A1,1,0,0,1,16,17Z"/>
+                            <path fill="url(#ai-gradient)" d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2ZM8.5,8A1.5,1.5,0,1,1,7,9.5,1.5,1.5,0,0,1,8.5,8Zm7,0A1.5,1.5,0,1,1,14,9.5,1.5,1.5,0,0,1,15.5,8ZM12,18c-2.28,0-4.22-1.66-5-4H17C16.22,16.34,14.28,18,12,18Z"/>
+                            <circle cx="12" cy="6" r="1" fill="url(#ai-gradient)" opacity="0.8"/>
+                            <circle cx="6" cy="12" r="1" fill="url(#ai-gradient)" opacity="0.6"/>
+                            <circle cx="18" cy="12" r="1" fill="url(#ai-gradient)" opacity="0.6"/>
+                            <circle cx="12" cy="18" r="1" fill="url(#ai-gradient)" opacity="0.4"/>
                         </svg>
                     </div>
-                    <h3>IT Training</h3>
-                    <p>Empower your workforce with tech skills. We provide comprehensive training programs designed to upskill your team, increase productivity, and ensure your organization stays competitive in the digital age.</p>
+                    <h3>AI-Powered IT Training</h3>
+                    <p>Don't let AI disruption leave your workforce behind. As artificial intelligence transforms the technology landscape, yesterday's skills won't guarantee tomorrow's jobs. Our AI-powered training programs future-proof careers and ensure your organization thrives while others struggle to catch up in the AI revolution.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="about">
+    <section id="about" class="about" role="complementary">
         <div class="container">
             <div class="about-content">
                 <div class="about-text">
@@ -111,14 +181,14 @@
                     <p>Our commitment to excellence, innovation, and customer satisfaction has made us a trusted partner for businesses looking to leverage technology for growth and success.</p>
                 </div>
                 <div class="about-image">
-                    <img src="images/logo.jpeg" alt="3DOVE Logo" class="about-logo">
+                    <img src="images/logo.png" alt="3DOVE Logo" class="about-logo">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact">
+    <section id="contact" class="contact" role="contentinfo">
         <div class="container">
             <div class="contact-content">
                 <div class="contact-info">
@@ -162,7 +232,7 @@
                                 <option value="" disabled selected>Select a service</option>
                                 <option value="IT Management">IT Management</option>
                                 <option value="IT Consulting">IT Consulting</option>
-                                <option value="IT Training">IT Training</option>
+                                <option value="AI-Powered IT Training">AI-Powered IT Training</option>
                                 <option value="All Services">All Services</option>
                             </select>
                         </div>
@@ -186,26 +256,37 @@
         </div>
     </footer>
 
-    <script src="js/script.js"></script>
     <script>
+        // Enhanced Mobile Navigation and Smooth Scrolling
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.querySelector('.hamburger-menu');
             const navLinks = document.querySelector('.nav-links');
             const body = document.body;
+            const header = document.querySelector('header');
             
-            // Fix for iOS Safari
-            hamburger.addEventListener('touchstart', function(e) {
-                e.preventDefault();
+            // Mobile menu toggle
+            function toggleMenu() {
+                const isOpen = hamburger.classList.contains('active');
                 hamburger.classList.toggle('active');
                 navLinks.classList.toggle('active');
                 body.classList.toggle('menu-open');
-            });
+                
+                // Update ARIA attributes
+                hamburger.setAttribute('aria-expanded', !isOpen);
+            }
             
+            // Event listeners for menu toggle
             hamburger.addEventListener('click', function(e) {
                 e.preventDefault();
-                hamburger.classList.toggle('active');
-                navLinks.classList.toggle('active');
-                body.classList.toggle('menu-open');
+                e.stopPropagation();
+                toggleMenu();
+            });
+            
+            // Touch support for iOS
+            hamburger.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleMenu();
             });
             
             // Close menu when clicking a link
@@ -225,6 +306,94 @@
                     body.classList.remove('menu-open');
                 }
             });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        const headerHeight = header.offsetHeight;
+                        const targetPosition = target.offsetTop - headerHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Header scroll effect
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    // Scrolling down
+                    header.style.transform = 'translateY(-100%)';
+                } else {
+                    // Scrolling up
+                    header.style.transform = 'translateY(0)';
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+            
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe elements for animation
+            document.querySelectorAll('.service-card, .about-text, .contact-info, .contact-form').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+            
+            // Form validation enhancement
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let isValid = true;
+                    
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            field.style.borderColor = '#e53e3e';
+                            isValid = false;
+                        } else {
+                            field.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                        }
+                    });
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                        alert('Please fill in all required fields.');
+                    }
+                });
+            }
+            
+            // Add loading state to form submission
+            const submitBtn = document.querySelector('.submit-btn');
+            if (submitBtn && form) {
+                form.addEventListener('submit', function() {
+                    submitBtn.textContent = 'Sending...';
+                    submitBtn.disabled = true;
+                });
+            }
         });
     </script>
 </body>
