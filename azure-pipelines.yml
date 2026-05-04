@@ -11,7 +11,7 @@ variables:
   tag: '$(Build.BuildId)'
   azureSubscription: 'Azure-Connection'
   appName: 'my-frontend-app'
-  resourceGroupName: 'your-resource-group-name'
+  resourceGroupName: 'azDevOps'
 
 stages:
 - stage: Build
